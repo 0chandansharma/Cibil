@@ -3,6 +3,7 @@ import { persistStore, persistReducer } from 'redux-persist';
 import storage from 'redux-persist/lib/storage';
 import { setLogoutHandler } from '../services/api';
 import { logout } from './slices/authSlice';
+import { injectStore } from '../services/api';
 
 // Import slices
 import authReducer from './slices/authSlice';
@@ -38,8 +39,12 @@ export const store = configureStore({
 });
 
 // Set the logout handler to dispatch the logout action
-setLogoutHandler(() => {
-  store.dispatch(logout());
-});
+// setLogoutHandler(() => {
+//   store.dispatch(logout());
+// });
+
+window.store = store;
+injectStore(store);
+
 
 export const persistor = persistStore(store);

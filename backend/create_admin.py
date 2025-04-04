@@ -1,3 +1,4 @@
+# backend/create_admin.py
 # Run this script to create an admin user
 from app.db.session import SessionLocal
 from app.db.models import User, UserRole
@@ -16,4 +17,4 @@ admin = User(
 db.add(admin)
 db.commit()
 db.close()
-print('Admin user created: chandan@deecogs.com / chandan123')
+print('Admin user created: admin@deecogs.com / admin@123')

@@ -32,6 +32,7 @@ const Login = () => {
   useEffect(() => {
     if (error) {
       setShowAlert(true);
+      console.error("Login error:", error);
       const timer = setTimeout(() => {
         setShowAlert(false);
         clearError();
@@ -43,8 +44,8 @@ const Login = () => {
   
   const formik = useFormik({
     initialValues: {
-        email: 'testuser',  // Use the username instead of email for now
-        password: 'password123',
+        email: '',  // Use the username instead of email for now
+        password: '',
     },
     validationSchema: loginSchema,
     onSubmit: async (values) => {

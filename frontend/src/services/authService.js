@@ -1,31 +1,30 @@
 import api from './api';
 
 const authService = {
-    login: async (credentials) => {
-      try {
-        console.log("Attempting login with:", credentials);
-        
-        // Create URLSearchParams object for form data
-        const formData = new URLSearchParams();
-        formData.append('username', credentials.username);
-        formData.append('password', credentials.password);
-        
-        console.log("Form data:", formData.toString());
-        
-        const response = await api.post('/auth/login', formData, {
-          headers: {
-            'Content-Type': 'application/x-www-form-urlencoded',
-          },
-        });
-        
-        console.log("Login successful, response:", response.data);
-        return response.data;
-      } catch (error) {
-        console.error('Login API error:', error);
-        console.error('Response data:', error.response?.data);
-        throw error;
-      }
-    },
+  login: async (credentials) => {
+    try {
+      console.log("Attempting login with:", credentials);
+      
+      // Create URLSearchParams object for form data
+      const formData = new URLSearchParams();
+      formData.append('username', credentials.username);
+      formData.append('password', credentials.password);
+      
+      console.log("Form data:", formData.toString());
+      
+      const response = await api.post('/auth/login', formData, {
+        headers: {
+          'Content-Type': 'application/x-www-form-urlencoded',
+        },
+      });
+      
+      console.log("Login response:", response.data);
+      return response.data;
+    } catch (error) {
+      console.error('Login API error:', error);
+      throw error;
+    }
+  },
   
   // If your backend doesn't have a logout endpoint, implement a client-side logout
   logout: async () => {

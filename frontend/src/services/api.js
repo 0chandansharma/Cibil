@@ -1,5 +1,5 @@
 import axios from 'axios';
-
+// import { store } from '../store';
 // Create a function to handle logout that will be set later
 let logoutHandler = () => {
   console.warn('Logout handler not initialized');
@@ -19,11 +19,20 @@ const api = axios.create({
 });
 
 // Add request interceptor to include auth token
+// Fix in frontend/src/services/api.js
+let store;
+
+export const injectStore = (_store) => {
+  store = _store;
+};
 api.interceptors.request.use(
   (config) => {
-    // Get store state without importing store directly
-    const state = window.store?.getState();
-    const token = state?.auth?.user?.token;
+    // Get token directly from store
+    const state = store.getState();
+    const token = state.auth?.user?.token;
+    
+    // Log for debugging
+    console.log('Token in interceptor:', token);
     
     if (token) {
       config.headers.Authorization = `Bearer ${token}`;
@@ -42,9 +51,11 @@ api.interceptors.response.use(
     return response;
   },
   (error) => {
-    if (error.response?.status === 401) {
-      // Call the logout handler instead of importing directly
-      logoutHandler();
+    // Only redirect to login on auth error if user was previously authenticated
+    if (error.response?.status === 401 && store.getState().auth.isAuthenticated) {
+      store.dispatch({ type: 'auth/logout/fulfilled' });
+      // Redirect to login if needed
+      // window.location.href = '/login';
     }
     return Promise.reject(error);
   }

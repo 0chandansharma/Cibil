@@ -5,7 +5,7 @@ import { useSelector } from 'react-redux';
 import { Box, CircularProgress } from '@mui/material';
 import Notification from './components/common/Notification';
 import ErrorBoundary from './components/common/ErrorBoundary';
-
+import StoreDebug from './components/common/StoreDebug';
 function App() {
   const { isLoading } = useSelector((state) => state.ui);
 
@@ -31,6 +31,7 @@ function App() {
               <CircularProgress />
             </Box>
           )}
+          <StoreDebug /> 
           <Notification />
           <AppRoutes />
         </Box>

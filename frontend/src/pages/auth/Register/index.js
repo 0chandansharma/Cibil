@@ -55,6 +55,7 @@ const Register = () => {
       email: '',
       password: '',
       confirmPassword: '',
+      role: 'ca', // Default role
     },
     validationSchema: registerSchema,
     onSubmit: async (values) => {
@@ -63,12 +64,14 @@ const Register = () => {
           username: values.username,
           email: values.email,
           password: values.password,
+          role: values.role || 'ca',
         });
+        // Show success notification
       } catch (err) {
         console.error('Registration error:', err);
       }
     },
-  });
+});
   
   return (
     <Container component="main" maxWidth="xs">

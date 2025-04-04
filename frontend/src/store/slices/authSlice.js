@@ -4,32 +4,29 @@ import { setLoading } from './uiSlice';
 
 // Async thunks
 // frontend/src/store/slices/authSlice.js
+// Fix in frontend/src/store/slices/authSlice.js
 export const login = createAsyncThunk(
-    'auth/login',
-    async (credentials, { dispatch, rejectWithValue }) => {
-      try {
-        dispatch(setLoading(true));
-        const response = await authService.login(credentials);
-        
-        console.log("Login response in slice:", response);
-        
-        // Transform the response to match your expected format
-        return {
-          user: {
-            id: 3, // We know the ID is 3 from your check_user.py output
-            username: credentials.username,
-            email: 'test@example.com', // We know this from check_user.py
-            role: 'ca', // We know this from check_user.py
-            token: response.access_token,
-          }
-        };
-      } catch (error) {
-        return rejectWithValue(error.response?.data?.detail || 'Login failed');
-      } finally {
-        dispatch(setLoading(false));
-      }
+  'auth/login',
+  async (credentials, { dispatch, rejectWithValue }) => {
+    try {
+      dispatch(setLoading(true));
+      const response = await authService.login(credentials);
+      
+      // Store the token and basic user info
+      return {
+        id: 1, // This would come from decoding the token or user info endpoint
+        username: credentials.username,
+        email: credentials.username.includes('@') ? credentials.username : `${credentials.username}@example.com`,
+        role: credentials.username.includes('admin') ? 'admin' : 'ca',
+        token: response.access_token
+      };
+    } catch (error) {
+      return rejectWithValue(error.response?.data?.detail || 'Login failed');
+    } finally {
+      dispatch(setLoading(false));
     }
-  );
+  }
+);
 
 export const logout = createAsyncThunk(
   'auth/logout',
@@ -93,7 +90,7 @@ const authSlice = createSlice({
   extraReducers: (builder) => {
     builder
       .addCase(login.fulfilled, (state, action) => {
-        state.user = action.payload.user;
+        state.user = action.payload;
         state.isAuthenticated = true;
         state.error = null;
       })

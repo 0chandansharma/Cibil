@@ -20,7 +20,10 @@ def get_current_user(
             token, settings.SECRET_KEY, algorithms=["HS256"]
         )
         token_data = TokenPayload(**payload)
-    except (JWTError, ValidationError):
+        
+        print(f"Token decoded successfully: {token_data}")
+    except Exception as e:
+        print(f"Token decode error: {str(e)}")
         raise HTTPException(
             status_code=status.HTTP_401_UNAUTHORIZED,
             detail="Could not validate credentials",
