@@ -16,3 +16,10 @@ PyPDF2==3.0.1
 pandas==2.0.1
 numpy==1.24.3
 aiohttp==3.8.4
+
+# Add to backend/requirements.txt
+pytesseract==0.3.10
+Pillow==9.5.0
+pdf2image==1.16.3
+# Add to backend/requirements.txt
+reportlab==3.6.12

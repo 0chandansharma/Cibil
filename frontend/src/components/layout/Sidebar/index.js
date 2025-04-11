@@ -16,6 +16,7 @@ import {
   Description as DocumentIcon,
   Assessment as AssessmentIcon,
   Settings as SettingsIcon,
+  AccountBalance as AccountBalanceIcon,
   BarChart as StatsIcon,
   Search as SearchIcon,
   Person as PersonIcon,
@@ -67,6 +68,12 @@ const Sidebar = () => {
         icon: <PersonIcon />,
         path: '/ca/clients',
         show: hasRole(user, 'ca'),
+      },
+      {
+        text: 'Bank Statement',
+        icon: <AccountBalanceIcon />,
+        path: '/workspace/bank-statement',
+        show: true,
       },
       {
         text: 'Documents',

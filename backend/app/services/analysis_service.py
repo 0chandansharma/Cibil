@@ -86,7 +86,20 @@ def extract_key_findings(summary: str) -> List[str]:
     
     return findings
 
+from app.services.report_service import generate_pdf_report
+
 def generate_report(db: Session, document_id: int, format: str) -> bytes:
+    """
+    Generate analysis report in specified format
+    """
+    if format == "pdf":
+        return generate_pdf_report(db, document_id)
+    else:
+        # For Excel, we'd implement similar functionality
+        # For now, return a mock Excel file
+        return b"PK\x03\x04...mock Excel content..."
+
+# def generate_report(db: Session, document_id: int, format: str) -> bytes:
     """
     Generate analysis report in specified format
     """

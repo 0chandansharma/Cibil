@@ -12,16 +12,23 @@ from app.schemas.token import TokenPayload
 
 oauth2_scheme = OAuth2PasswordBearer(tokenUrl=f"{settings.API_V1_STR}/auth/login")
 
+_token_log_counter = 0
+
 def get_current_user(
     db: Session = Depends(get_db), token: str = Depends(oauth2_scheme)
 ) -> User:
+    global _token_log_counter
+    
     try:
         payload = jwt.decode(
             token, settings.SECRET_KEY, algorithms=["HS256"]
         )
         token_data = TokenPayload(**payload)
         
-        print(f"Token decoded successfully: {token_data}")
+        # Only log occasionally to reduce spam
+        _token_log_counter += 1
+        if _token_log_counter % 100 == 0:  # Log every 100th request
+            print(f"Token decoded successfully: {token_data}")
     except Exception as e:
         print(f"Token decode error: {str(e)}")
         raise HTTPException(

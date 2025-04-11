@@ -71,6 +71,19 @@ const documentService = {
     const response = await api.get(`/analysis/${documentId}/ocr`);
     return response.data;
   },
+
+  processBankStatement: async (file) => {
+    const formData = new FormData();
+    formData.append('file', file);
+    
+    const response = await api.post('/documents/process-bank-statement', formData, {
+      headers: {
+        'Content-Type': 'multipart/form-data',
+      },
+    });
+    
+    return response.data;
+  },
   
   chatWithDocument: async (documentId, message) => {
     const response = await api.post(`/analysis/${documentId}/chat`, { message });

@@ -24,6 +24,8 @@ class Settings(BaseSettings):
     # Database
     DATABASE_URL: str = os.getenv("DATABASE_URL", "sqlite:///./financial_platform.db")
     
+    # Add to backend/app/core/config.py in the Settings class
+    REDIS_URL: str = os.getenv("REDIS_URL", "redis://localhost:6379/0")
     # File Storage
     UPLOAD_DIR: str = os.getenv("UPLOAD_DIR", "./uploads")
     MAX_UPLOAD_SIZE: int = 10 * 1024 * 1024  # 10 MB

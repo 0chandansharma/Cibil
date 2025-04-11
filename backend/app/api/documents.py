@@ -9,6 +9,7 @@ from app.core.config import settings
 from app.db.models import Document, DocumentStatus, User, Client
 from app.schemas.document import Document as DocumentSchema, DocumentCreate, DocumentUpdate, DocumentWithClientName
 from app.services import document_service
+from app.services import ocr_service
 
 router = APIRouter()
 
@@ -285,3 +286,58 @@ def delete_document(
         "documentId": document_id,
         "message": "Document deleted successfully",
     }
+
+# Add this to backend/app/api/documents.py
+@router.post("/process-bank-statement", response_model=dict)
+async def process_bank_statement(
+    *,
+    db: Session = Depends(deps.get_db),
+    current_user: User = Depends(deps.get_current_user),
+    file: UploadFile = File(...),
+) -> Any:
+    """
+    Process a bank statement PDF and return OCR results
+    """
+    # Validate file size
+    file_size = 0
+    file.file.seek(0, os.SEEK_END)
+    file_size = file.file.tell()
+    file.file.seek(0)
+    
+    if file_size > settings.MAX_UPLOAD_SIZE:
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail=f"File too large. Maximum size is {settings.MAX_UPLOAD_SIZE / (1024 * 1024)}MB",
+        )
+    
+    # Validate file type
+    file_ext = os.path.splitext(file.filename)[1].lower()
+    if file_ext != ".pdf":
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail="Only PDF files are allowed for bank statements",
+        )
+    
+    # Save file temporarily
+    temp_file_path = os.path.join(settings.UPLOAD_DIR, f"temp_{uuid.uuid4()}{file_ext}")
+    try:
+        os.makedirs(os.path.dirname(temp_file_path), exist_ok=True)
+        with open(temp_file_path, "wb") as buffer:
+            buffer.write(await file.read())
+        
+        # Process the PDF using your OCR API
+        try:
+            # Replace this with your actual OCR API call
+            ocr_result = await ocr_service.process_bank_statement(temp_file_path)
+            
+            # Return the OCR results
+            return ocr_result
+        except Exception as e:
+            raise HTTPException(
+                status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+                detail=f"Error processing bank statement: {str(e)}",
+            )
+    finally:
+        # Clean up temporary file
+        if os.path.exists(temp_file_path):
+            os.remove(temp_file_path)

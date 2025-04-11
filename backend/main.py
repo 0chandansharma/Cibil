@@ -4,6 +4,8 @@ from fastapi.middleware.cors import CORSMiddleware
 from app.api import auth, admin, documents, clients, analysis
 from app.core.config import settings
 from app.db.session import create_tables
+from app.api import ca
+
 
 app = FastAPI(
     title=settings.PROJECT_NAME,
@@ -26,6 +28,7 @@ app.include_router(admin.router, prefix="/api/admin", tags=["Admin"])
 app.include_router(documents.router, prefix="/api/documents", tags=["Documents"])
 app.include_router(clients.router, prefix="/api/clients", tags=["Clients"])
 app.include_router(analysis.router, prefix="/api/analysis", tags=["Analysis"])
+app.include_router(ca.router, prefix="/api/ca", tags=["CA"])
 
 @app.on_event("startup")
 async def startup_event():

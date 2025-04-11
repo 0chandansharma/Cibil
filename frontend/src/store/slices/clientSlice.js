@@ -3,9 +3,19 @@ import clientService from '../../services/clientService';
 import { setLoading } from './uiSlice';
 
 // Async thunks
+// frontend/src/store/slices/clientSlice.js
 export const getClients = createAsyncThunk(
   'clients/getAll',
-  async (_, { dispatch, rejectWithValue }) => {
+  async (_, { dispatch, rejectWithValue, getState }) => {
+    const state = getState();
+    
+    // If we already have clients data and it was fetched recently (within last minute),
+    // don't fetch again
+    const lastFetched = state.clients.lastFetched;
+    if (lastFetched && Date.now() - lastFetched < 60000) {
+      return state.clients.clients;
+    }
+    
     try {
       dispatch(setLoading(true));
       const response = await clientService.getClients();
@@ -101,6 +111,7 @@ const clientSlice = createSlice({
     currentClient: null,
     clientDocuments: {},
     error: null,
+    lastFetched: null,
   },
   reducers: {
     clearCurrentClient: (state) => {
@@ -118,6 +129,7 @@ const clientSlice = createSlice({
       .addCase(getClients.fulfilled, (state, action) => {
         state.clients = action.payload;
         state.error = null;
+        state.lastFetched = Date.now();
       })
       .addCase(getClients.rejected, (state, action) => {
         state.error = action.payload;
